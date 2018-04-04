@@ -1,0 +1,16 @@
+<svg width="120" height="60" viewBox="0 0 120 60" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:figma="http://www.figma.com/figma/ns">
+<title>tc-logo</title>
+<desc>Created using Figma</desc>
+<g id="Canvas" transform="translate(266 -3027)" figma:type="canvas">
+<g id="tc-logo" style="mix-blend-mode:normal;" figma:type="vector">
+<use xlink:href="#path0_fill" transform="translate(-266 3027)" fill="#000000" fill-opacity="0.2" style="mix-blend-mode:normal;"/>
+<use xlink:href="#path1_fill" transform="translate(-266 3027)" fill="#000000" fill-opacity="0.2" style="mix-blend-mode:normal;"/>
+<use xlink:href="#path2_fill" transform="translate(-266 3027)" fill="#000000" fill-opacity="0.2" style="mix-blend-mode:normal;"/>
+</g>
+</g>
+<defs>
+<path id="path0_fill" d="M 60 0L 60 20L 40 20L 40 60L 20 60L 20 20L 0 20L 0 0L 60 0Z"/>
+<path id="path1_fill" d="M 120 0L 80 0L 80 20L 120 20L 120 0Z"/>
+<path id="path2_fill" d="M 120 40L 120 60L 60 60L 60 20L 80 20L 80 40L 120 40Z"/>
+</defs>
+</svg>

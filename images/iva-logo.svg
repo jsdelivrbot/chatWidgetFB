@@ -1,0 +1,18 @@
+<svg width="138" height="40" viewBox="0 0 138 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:figma="http://www.figma.com/figma/ns">
+<title>iva-logo</title>
+<desc>Created using Figma</desc>
+<g id="Canvas" transform="translate(983 1973)" figma:type="canvas">
+<g id="iva-logo" style="mix-blend-mode:normal;" figma:type="frame">
+<g id="IVA" style="mix-blend-mode:normal;" figma:type="text">
+<use xlink:href="#path0_fill" transform="translate(-913 -2003)" fill="#FFFFFF" style="mix-blend-mode:normal;"/>
+</g>
+<g id="icon" style="mix-blend-mode:normal;" figma:type="vector">
+<use xlink:href="#path1_fill" transform="translate(-983 -1973)" fill="#FFFFFF" style="mix-blend-mode:normal;"/>
+</g>
+</g>
+</g>
+<defs>
+<path id="path0_fill" d="M 1.386 43.4L 4.23 43.4L 4.23 56L 1.386 56L 1.386 43.4ZM 23.6426 43.4L 26.7026 43.4L 30.1406 52.904L 33.5966 43.4L 36.5306 43.4L 31.5266 56L 28.5926 56L 23.6426 43.4ZM 64.2701 56L 63.2801 53.552L 57.4481 53.552L 56.4581 56L 53.5241 56L 58.9961 43.4L 61.9301 43.4L 67.3121 56L 64.2701 56ZM 58.3841 51.266L 62.3621 51.266L 60.3821 46.37L 58.3841 51.266Z"/>
+<path id="path1_fill" d="M 16.1296 7.0735L 20 0L 23.8704 7.0735C 24.0212 7.34903 24.3661 7.45124 24.6426 7.30233L 27.8571 5.57143L 26.6209 16.0796C 26.5575 16.6178 27.2092 16.9336 27.5925 16.5504L 32.1429 12L 32.8657 14.7708C 32.9414 15.0609 33.2284 15.2432 33.5231 15.1884L 39.1429 14.1429L 37.5299 20.8636C 37.47 21.1131 37.5837 21.3719 37.808 21.4965L 40 22.7143L 30.386 30.6563C 30.2347 30.7813 30.1581 30.9753 30.1832 31.17L 30.7143 35.2857L 20.5714 33.9333L 20.5714 40L 19.4286 40L 19.4286 33.9333L 9.28571 35.2857L 9.81679 31.17C 9.8419 30.9753 9.76535 30.7813 9.61398 30.6563L 0 22.7143L 2.192 21.4965C 2.41626 21.3719 2.52999 21.1131 2.47014 20.8636L 0.857143 14.1429L 6.47688 15.1884C 6.77162 15.2432 7.05863 15.0609 7.13431 14.7708L 7.85714 12L 12.4075 16.5504C 12.7908 16.9336 13.4425 16.6178 13.3791 16.0796L 12.1429 5.57143L 15.3574 7.30233C 15.6339 7.45124 15.9788 7.34903 16.1296 7.0735Z"/>
+</defs>
+</svg>

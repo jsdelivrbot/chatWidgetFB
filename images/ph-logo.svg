@@ -1,0 +1,14 @@
+<svg width="80" height="80" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:figma="http://www.figma.com/figma/ns">
+<title>ph-logo</title>
+<desc>Created using Figma</desc>
+<g id="Canvas" transform="translate(686 -3017)" figma:type="canvas">
+<g id="ph-logo" style="mix-blend-mode:normal;" figma:type="vector">
+<use xlink:href="#path0_fill" transform="translate(-686 3017)" fill="#000000" fill-opacity="0.2" style="mix-blend-mode:normal;"/>
+<use xlink:href="#path1_fill" transform="translate(-686 3017)" fill="#000000" fill-opacity="0.2" style="mix-blend-mode:normal;"/>
+</g>
+</g>
+<defs>
+<path id="path0_fill" d="M 34 40L 45.334 40C 48.646 40 51.334 37.314 51.334 34C 51.334 30.686 48.646 28 45.334 28L 34 28L 34 40Z"/>
+<path id="path1_fill" fill-rule="evenodd" d="M 40 80C 62.092 80 80 62.092 80 40C 80 17.908 62.092 0 40 0C 17.908 0 0 17.908 0 40C 0 62.092 17.908 80 40 80ZM 26 20L 45.334 20C 53.066 20 59.334 26.2681 59.334 34C 59.334 41.7319 53.066 48 45.334 48L 34 48L 34 60L 26 60L 26 20Z"/>
+</defs>
+</svg>
