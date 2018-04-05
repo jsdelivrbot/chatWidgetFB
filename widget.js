@@ -4,6 +4,28 @@
     // var root = 'https://rawgit.com/kachanovskyi/toyotacr-widget/master/';
     var root = './';
 
+    //FB login
+    window.fbAsyncInit = function () {
+        FB.init({
+            appId: 1975921582622675,
+            autoLogAppEvents: true,
+            xfbml: true,
+            version: 'v2.10'
+        });
+        FB.AppEvents.logPageView();
+    };
+
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {
+            return;
+        }
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
     //Loading stylesheets and scripts functions
     function loadStylesheet(url) {
         var head = document.getElementsByTagName('head')[0];
@@ -735,7 +757,7 @@
                     // type: "POST",
                     type: "GET",            //mocked up version, should be post with data: !!!
                     // url: 'https://pavlenko.botscrew.com/web/getStarted',
-                    url: './data/response5.json',           //mocked up version,
+                    url: './data/response6.json',           //mocked up version,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     data: JSON.stringify(data),
