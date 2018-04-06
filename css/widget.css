@@ -184,6 +184,12 @@
     width: 100%;
 }
 
+#chat-window .message-container .message-row .image_simple {
+    max-width: 90%;
+    margin: 4px 4px 0 4px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
 #chat-window .message-container .bot-icon {
     display: inline-block;
     width: 40px;

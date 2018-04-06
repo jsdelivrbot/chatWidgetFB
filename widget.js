@@ -354,20 +354,15 @@
             }
 
             if ((val.message !== null) && (val.message !== undefined)) {
-                console.log(1);
                 if (val.message.text !== undefined) {
-                    console.log(11);
                     message.text(val.message.text);
                     sendName(val.message.text, "", true);
                 } else if (val.message.attachment !== undefined) {
-                    console.log(12);
                     message.text(val.message.attachment.payload.text);
                 }
 
                 setTimeout(function () {
-                    console.log(2);
                     if (message.text().length && message.text().trim()) {
-                        console.log(21);
                         $('<div class="message-row">')
                             .append(
                                 message
@@ -376,7 +371,6 @@
                     }
 
                     if (val.message.quick_replies) {
-                        console.log(22);
                         scrCont = $('<div>')
                             .addClass('scrolling-container')
                             .addClass('quick')
@@ -425,7 +419,6 @@
                             .appendTo(container);
 
                         val.message.quick_replies.forEach(function (item) {
-                            console.log(23);
                             $('<li>')
                                 .text(item.title)
                                 .attr('payload', item.payload)
@@ -608,6 +601,17 @@
                         });
                     }
 
+                    if (val.message.attachment && val.message.attachment.type === "image" && val.message.attachment.payload.url) {
+
+                        $('<div class="message-row">')
+                            .append(
+                                $('<img class="image_simple" alt="image sent by chatbot"/>')
+                                    .attr("src", val.message.attachment.payload.url)
+                            )
+                            .appendTo(container);
+
+                    }
+
                     chatScrollBottom();
 
                 }, 333);
@@ -757,7 +761,7 @@
                     // type: "POST",
                     type: "GET",            //mocked up version, should be post with data: !!!
                     // url: 'https://pavlenko.botscrew.com/web/getStarted',
-                    url: './data/response6.json',           //mocked up version,
+                    url: './data/image.json',           //mocked up version,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     data: JSON.stringify(data),
@@ -837,7 +841,6 @@
                     scrCont = $(".scrolling-container:not(.quick)").last();
                 }
 
-                // var scrCont = genInfo.parent().parent();
                 scrCont.find('.generic-info').each(function () {
                     $(this).css('width', scrContWidth);
                     var genImg = $(this).parent().find('.generic-img');
@@ -851,9 +854,6 @@
                 scrCont.find('.generic').each(function () {
                     scrContWidth += parseInt($(this).css('width'), 10) + 20;
                 });
-
-                // console.log(scrContWidth, 'scrContWidth');
-                // console.log($(scrCont[0]).css('width'), 'scrWidth');
 
                 if (scrContWidth > parseInt($(scrCont[0]).css('width'), 10)) {
                     $(scrCont[0]).addClass('scrollable');
