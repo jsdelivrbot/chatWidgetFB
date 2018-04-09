@@ -9,7 +9,7 @@
         "elements": [
           {
             "title": "Single",
-            "subtitle": null,
+            "subtitle": "You have a Family Trust or Self-Managed Superannuation Fund.",
             "buttons": [
               {
                 "type": "postback",
@@ -21,7 +21,7 @@
           },
           {
             "title": "Committed",
-            "subtitle": null,
+            "subtitle": "You are giving one of your beneficiaries an inheritance of more than $500k and you want them to receive their inheritance in a tax effective way.",
             "buttons": [
               {
                 "type": "postback",

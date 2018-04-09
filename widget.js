@@ -1,13 +1,35 @@
 //© All rights reserved. BotsCrew 2018
 
 (function () {
-    // var root = 'https://rawgit.com/kachanovskyi/toyotacr-widget/master/';
-    var root = './';
+
+    var rootUrl = "./";
+    var botImageUrl = "https://rawgit.com/kachanovskyi/toyotacr-widget/master/img/toyota-logo.png";
+    var getStartedUrl = "https://pavlenko.botscrew.com/web/getStarted";         //to get a FB userId. FB returns userId - IMPORTANT!
+
+    var socketUrl = "https://pavlenko.botscrew.com/web";
+    var stompClientSubscribeUrl = "/topic/greetings/";
+    var stompClientSendUrl = "/app/hello";
+
+    var appId = 1975921582622675;
+    var persistentMenuList = [
+        {
+            title: "Disclaimer",
+            postback: "DISCLAIMER"
+        },
+        {
+            title: "Main Menu",
+            postback: "MAIN_MENU"
+        },
+        {
+            title: "Help",
+            postback: "HELP_MENU"
+        }
+    ];
 
     //FB login
     window.fbAsyncInit = function () {
         FB.init({
-            appId: 1975921582622675,
+            appId: appId,
             autoLogAppEvents: true,
             xfbml: true,
             version: 'v2.10'
@@ -68,7 +90,7 @@
     }
 
     //Loading necessary stylesheets
-    loadStylesheet(root + 'css/widget.css');
+    loadStylesheet(rootUrl + 'css/widget.css');
     loadStylesheet('https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css');
 
     //Loading necessary socket script files
@@ -136,10 +158,8 @@
                     .css('height', chatHeight)
                     .css('top', -chatHeight - 16)
                     .css('width', launcherCont.width)
-                    // .css('position', 'absolute')
                     .css('right', launcherCont.right)
                     .css('display', 'none')
-                    // .css('z-index', '10001')
                     .append(messageContainer)
                     .append(
                         $('<div class="chat-top">')
@@ -155,12 +175,23 @@
                             .append(
                                 $('<div class="input-container">')
                                     .append(
+                                        $('<span id="menuBtn">')
+                                            .append($('<i class="zmdi zmdi-menu">'))
+                                            .on('click', function () {
+                                                var menu = $(".persistent-menu");
+                                                menu.css('display') === 'none' ? menu.show() : menu.hide();
+                                            })
+                                    )
+                                    .append(
                                         $('<input id="chatInput" type="text" placeholder="Enter message...">')
                                             .keypress(function (evt) {
                                                 if (evt.which === 13) {
                                                     evt.preventDefault();
                                                     send();
                                                 }
+                                            })
+                                            .on("click", function () {
+                                                $(".persistent-menu").hide();
                                             })
                                     )
                                     .append(
@@ -169,6 +200,21 @@
                             )
                     )
                     .appendTo(chatbot);
+
+                var menu = $('<ul class="persistent-menu">')
+                    .append($('<li class="menu-item">Menu</li>'))
+                    .appendTo($(".chat-bottom"));
+
+                persistentMenuList.forEach(function (value) {
+                    $('<li class="menu-item link">')
+                        .text(value.title)
+                        .data("postback", value.postback)
+                        .on("click", function () {
+                            send("menu", $(this).data("postback"));
+                            $(".persistent-menu").hide();
+                        })
+                        .appendTo(menu);
+                });
 
                 $('.close-btn').on("click", chatWindowClose);
 
@@ -182,12 +228,8 @@
                 .append(
                     $('<div class="inner">')
                         .append(
-                            $('<p class="description">')
-                                .text("Please login")
-
-                            // .text("To continue chat to Ailira, please login using one of the social networks below")
+                            $('<p class="description">Please login</p>')
                         )
-
                         .append(
                             $('<input type="text" placeholder="Name" >')
                                 .attr('id', 'inputName')
@@ -235,8 +277,7 @@
                                             chatInit();                                         //mocked up version
                                             $.ajax({
                                                 type: "POST",
-                                                //url: 'https://0bec2049.ngrok.io/web/getStarted',
-                                                url: 'https://pavlenko.botscrew.com/web/getStarted',
+                                                url: getStartedUrl,
                                                 contentType: "application/json; charset=utf-8",
                                                 dataType: "json",
                                                 data: JSON.stringify(data),
@@ -253,10 +294,7 @@
                                     }
                                 })
                         )
-
                         .append('<hr class="hr-text" data-content="OR">')
-
-
                         .append(
                             $('<a class="login-btn fb">')
                                 .append(
@@ -275,6 +313,7 @@
 
             $.fn.isolatedScroll = function () {
                 this.bind('mousewheel DOMMouseScroll ontouchstart ontouchmove', function (e) {
+                    console.log('scrolling');
                     var delta = e.wheelDelta || (e.originalEvent && e.originalEvent.wheelDelta) || -e.detail,
                         bottomOverflow = this.scrollTop + $(this).outerHeight() - this.scrollHeight >= 0,
                         topOverflow = this.scrollTop <= 0;
@@ -327,6 +366,7 @@
             }
         }
 
+        var container = null;
         function setResponse(val) {
 
             var typing = $('.message-container').find($('#wave'));
@@ -335,8 +375,24 @@
                 typing.parent().parent().remove();
             }
 
+            if(!container) {
+                container = $('<div class="message-outer bot">')
+                    .append(
+                        $('<div class="flex-container">')
+                            .append(
+                                $('<div class="bot-icon">')
+                                    .append(
+                                        $('<img/>').attr('src', botImageUrl)
+                                    )
+                            )
+                            .append($('<div class="message-wrapper">'))
+                    );
+            } else {
+                container = $(".message-outer.bot").last();
+            }
+
             var sendBtn = $('.send-message');
-            var container = $('<div class="message-outer bot">');
+            var msgWrapper = container.find(".message-wrapper");
             var message = $('<div class="chat-message bot">');
             var btnWidth,
                 scrCont,
@@ -347,7 +403,7 @@
                     .append($('<span class="dot">'))
                     .append($('<span class="dot">'))
                     .append($('<span class="dot">'));
-                container.append(
+                msgWrapper.append(
                     $('<div class="message-row">')
                         .append(wave)
                 );
@@ -364,10 +420,8 @@
                 setTimeout(function () {
                     if (message.text().length && message.text().trim()) {
                         $('<div class="message-row">')
-                            .append(
-                                message
-                            )
-                            .appendTo(container);
+                            .append(message)
+                            .appendTo(msgWrapper);
                     }
 
                     if (val.message.quick_replies) {
@@ -380,16 +434,25 @@
                                     .text('<')
                                     .click(
                                         function () {
-                                            var navwidth = scrCont.find('ul');
-                                            navwidth.scrollLeft(navwidth.scrollLeft() - 200);
-                                            if (navwidth.scrollLeft() === 0) {
-                                                $('#leftArrow').hide();
-                                            }
-                                            $('#rightArrow').show();
-                                            if ($('.scrolling-container').width() > $('#scroll').width()) {
-                                                $('#leftArrow').hide();
-                                                $('#rightArrow').hide();
-                                            }
+                                            var repliesList = $('#scroll');
+                                            var rightArrow = $('#rightArrow');
+                                            repliesList
+                                                .clearQueue()
+                                                .stop()
+                                                .animate({
+                                                    scrollLeft: "-=" + 200
+                                                }, "fast", function () {
+
+                                                    if (repliesList.scrollLeft() < rightArrow.width()) {
+                                                        $('#leftArrow').hide();
+                                                    }
+                                                    rightArrow.css('display', 'flex');
+                                                    if ($('.scrolling-container').width() > repliesList.width()) {
+                                                        $('#leftArrow').hide();
+                                                        $('#rightArrow').hide();
+                                                    }
+
+                                                });
                                         }
                                     )
                             )
@@ -399,16 +462,29 @@
                                     .text('>')
                                     .click(
                                         function () {
-                                            var navwidth = scrCont.find('ul');
-                                            navwidth.scrollLeft(navwidth.scrollLeft() + 200);
-                                            if (navwidth.scrollLeft() + navwidth.width() === navwidth.get(0).scrollWidth) {
-                                                $('#rightArrow').hide();
-                                            }
-                                            $('#leftArrow').show();
-                                            if ($('.scrolling-container').width() > $('#scroll').width()) {
-                                                $('#leftArrow').hide();
-                                                $('#rightArrow').hide();
-                                            }
+                                            var repliesList = $('#scroll');
+                                            var leftArrow =  $('#leftArrow');
+                                            repliesList
+                                                .clearQueue()
+                                                .stop()
+                                                .animate({
+                                                    scrollLeft: "+=" + 200
+                                                }, "fast", function () {
+
+                                                    if (repliesList.scrollLeft() + repliesList.width() >=
+                                                        (repliesList.get(0).scrollWidth - leftArrow.width())) {
+
+                                                        $('#rightArrow').hide();
+
+                                                    }
+
+                                                    leftArrow.css('display', 'flex');
+                                                    if ($('.scrolling-container').width() > $('#scroll').width()) {
+                                                        $('#leftArrow').hide();
+                                                        $('#rightArrow').hide();
+                                                    }
+
+                                                });
                                         }
                                     )
                             )
@@ -416,7 +492,7 @@
                                 $('<ul>')
                                     .attr('id', 'scroll')
                             )
-                            .appendTo(container);
+                            .appendTo(msgWrapper);
 
                         val.message.quick_replies.forEach(function (item) {
                             $('<li>')
@@ -430,10 +506,10 @@
                         });
 
                         scrCont.find('ul').find('li').each(function () {
-                            scrContWidth += $(this).width() + 20;
+                            scrContWidth += parseInt($(this).css('width'), 10);
                         });
 
-                        if (scrContWidth > parseInt(scrCont.css('width'), 10)) {
+                        if (scrContWidth > parseInt($("#messageContainer").css('width'), 10)) {
                             scrCont.addClass('scrollable');
                         }
 
@@ -441,8 +517,8 @@
                             $('#leftArrow').hide();
                             $('#rightArrow').hide();
                         } else {
-                            $('#leftArrow').show();
-                            $('#rightArrow').show();
+                            $('#leftArrow').css('display', 'flex');
+                            $('#rightArrow').css('display', 'flex');
                         }
 
                         if ($('.quick').find('ul').scrollLeft() === 0) {
@@ -460,10 +536,8 @@
                                     .text('<')
                                     .click(
                                         function () {
-                                            var navwidth = parseInt(scrCont.find('ul').css('width'), 10) + 8;
+                                            var navwidth = parseInt(scrCont.find('ul').css('width'), 10);
                                             scrCont.find('ul')
-                                                .clearQueue()
-                                                .stop()
                                                 .animate({
                                                     scrollLeft: "-=" + navwidth
                                                 }, "fast");
@@ -475,11 +549,9 @@
                                     .text('>')
                                     .click(
                                         function () {
-                                            var navwidth = parseInt(scrCont.find('ul').css('width'), 10) + 8;
+                                            var navwidth = parseInt(scrCont.find('ul').css('width'), 10);
 
                                             scrCont.find('ul')
-                                                .clearQueue()
-                                                .stop()
                                                 .animate({
                                                     scrollLeft: "+=" + navwidth
                                                 }, "fast");
@@ -494,7 +566,7 @@
                             scrCont.addClass('list');
                         }
 
-                        scrCont.appendTo(container);
+                        scrCont.appendTo(msgWrapper);
 
 
                         val.message.attachment.payload.elements.forEach(function (item) {
@@ -560,13 +632,12 @@
                         });
 
                         setGenericWidth(scrCont);
-
                     }
 
                     if (val.message.attachment && val.message.attachment.payload.buttons) {
 
                         message.css('border-radius', '6px 6px 0 0');
-                        btnWidth = message.outerWidth();
+                        btnWidth = message.outerWidth() + 1;
 
                         val.message.attachment.payload.buttons.forEach(function (entry) {
 
@@ -596,8 +667,7 @@
                                     .attr('target', '_blank')
                             }
 
-                            btn.appendTo(container)
-
+                            btn.appendTo(msgWrapper)
                         });
                     }
 
@@ -608,30 +678,28 @@
                                 $('<img class="image_simple" alt="image sent by chatbot"/>')
                                     .attr("src", val.message.attachment.payload.url)
                             )
-                            .appendTo(container);
+                            .appendTo(msgWrapper);
 
                     }
 
                     chatScrollBottom();
-
                 }, 333);
             }
 
             container.appendTo($('#chat-window').find('.message-container'));
             chatScrollBottom();
-
         }
 
         var stompClient = null;
 
         function connect() {
             console.log('stomp connect');
-            var socket = new SockJS('https://pavlenko.botscrew.com/web');
+            var socket = new SockJS(socketUrl);
             stompClient = Stomp.over(socket);
             stompClient.connect({}, function (frame) {
                 // setConnected(true);
                 // console.log('Connected: ' + frame);
-                stompClient.subscribe('/topic/greetings/' + chatId, function (greeting) {
+                stompClient.subscribe(stompClientSubscribeUrl + chatId, function (greeting) {
                     userId = JSON.parse(greeting.body).recipient.id;
                     showGreeting(JSON.parse(greeting.body));
                 });
@@ -650,8 +718,6 @@
         }
 
         function sendName(message, param, echo) {
-            console.log('send name func');
-
             var data = {
                 object: "page",
                 entry: [
@@ -675,7 +741,6 @@
             };
 
             if (param === "btn") {
-                console.log('send name btn');
                 data.entry[0].messaging[0].postback = {
                     payload: message
                 }
@@ -689,11 +754,10 @@
                 data.entry[0].messaging[0].message.is_echo = true;
             }
 
-            // stompClient.send("/app/hello", {}, JSON.stringify(data));
+            // stompClient.send(stompClientSendUrl, {}, JSON.stringify(data));
         }
 
         function showGreeting(message) {
-            console.log('showGreeting');
             setResponse(message, setGenericWidth);
         }
 
@@ -718,13 +782,10 @@
                 }
 
             });
-
-            // gapi.load('client', initClient);
         });
 
 
         function loginFB() {
-
             FB.getLoginStatus(function (response) {
                 if (response.status === 'connected') {
                     console.log('Already logged in FB.');
@@ -760,8 +821,8 @@
                 $.ajax({
                     // type: "POST",
                     type: "GET",            //mocked up version, should be post with data: !!!
-                    // url: 'https://pavlenko.botscrew.com/web/getStarted',
-                    url: './data/image.json',           //mocked up version,
+                    // url: getStartedUrl,
+                    url: './data/response5.json',           //mocked up version,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     data: JSON.stringify(data),
@@ -781,40 +842,39 @@
         function send(param, elem) {
 
             $('.scrolling-container.quick').remove();
+            $(".persistent-menu").hide();
 
-            if (!$('.send-message').is('.disabled')) {
+            var input = $("#chatInput");
+            var text = input.val();
+            container = null;
 
-                var text = $("#chatInput").val();
+            if (param === "btn") {
+                text = elem.text();
+            }
+
+            if (param === "menu") {
+                text = elem;
+            }
+
+            if (text.length && text.trim()) {
+                input.val('');
 
                 if (param === "btn") {
-                    text = elem.text();
-                }
-
-                if (param === "menu") {
-                    text = elem;
-                }
-
-                if (text.length && text.trim()) {
-
-                    $("#chatInput").val('');
-                    if (param === "btn") {
-                        sendName(elem.attr('payload'), "btn");
-                    } else {
-                        sendName(text);
-                    }
-
-                    $('<div class="message-outer user">')
-                        .append(
-                            $('<div class="chat-message user">').text(text)
-                        )
-                        .appendTo($('#chat-window').find('.message-container'));
-
+                    sendName(elem.attr('payload'), "btn");
                 } else {
-                    $("#chatInput").val('').focus();
+                    sendName(text);
                 }
-                chatScrollBottom();
 
+                $('<div class="message-outer user">')
+                    .append(
+                        $('<div class="chat-message user">').text(text)
+                    )
+                    .appendTo($('#chat-window').find('.message-container'));
+
+            } else {
+                input.val('').focus();
             }
+            chatScrollBottom();
 
         }
 
@@ -823,8 +883,9 @@
             messageContainer.animate({scrollTop: messageContainer.prop("scrollHeight")}, 0);
         }
 
-        var resizeTimer,
-            genericScrollValue;
+        var resizeTimer;
+
+        // var genericScrollValue;
 
         function setGenericWidth(scrCont) {
 
@@ -832,17 +893,16 @@
 
             resizeTimer = setTimeout(function () {
 
-                genericScrollValue = parseInt($('.chat-container').css('width'), 10);
+                // genericScrollValue = parseInt($('.chat-container').css('width'), 10);
 
-                // var scrContWidth = genInfo.parent().parent().css('width');
-                var scrContWidth = parseInt($('#messageContainer .message-outer.bot').css('width'), 10) - 3;
+                var genericWidth = parseInt($('#messageContainer .message-outer.bot').css('width'), 10) - 28 - 60;
 
                 if (scrCont === undefined) {
                     scrCont = $(".scrolling-container:not(.quick)").last();
                 }
 
                 scrCont.find('.generic-info').each(function () {
-                    $(this).css('width', scrContWidth);
+                    $(this).css('width', genericWidth);
                     var genImg = $(this).parent().find('.generic-img');
 
                     if (genImg) {
@@ -851,16 +911,19 @@
                     }
                 });
 
+                var scrContWidth = 0;
+
                 scrCont.find('.generic').each(function () {
-                    scrContWidth += parseInt($(this).css('width'), 10) + 20;
+                    scrContWidth += parseInt($(this).css('width'), 10);
+                    console.log(scrContWidth);
                 });
+
+                console.log(scrCont[0]);
 
                 if (scrContWidth > parseInt($(scrCont[0]).css('width'), 10)) {
                     $(scrCont[0]).addClass('scrollable');
 
                     scrContWidth = parseInt($('#messageContainer .message-outer.bot').css('width'), 10) - 44 - 40;
-
-                    // console.log(scrContWidth);
 
                     $(scrCont[0]).find('.generic-info').each(function () {
                         $(this).css('width', scrContWidth);
@@ -875,7 +938,7 @@
 
                 chatScrollBottom();
 
-            }, 250);
+            }, 10);
 
         }
 
@@ -889,18 +952,19 @@
                 // setChatSize();
             })
             .on('resize', function () {
-                setGenericWidth();
+                // setGenericWidth();
             });
 
         $(window).resize(function () {
-            if ($('.scrolling-container').width() > $('#scroll').width()) {
+            var repliesList = $('#scroll');
+            if ($('.scrolling-container').width() > repliesList.width()) {
                 $('#leftArrow').hide();
                 $('#rightArrow').hide();
             } else {
-                $('#leftArrow').show();
-                $('#rightArrow').show();
+                $('#leftArrow').css('display', 'flex');
+                $('#rightArrow').css('display', 'flex');
             }
-            if ($('.quick').find('ul').scrollLeft() === 0) {
+            if (repliesList.scrollLeft() === 0) {
                 $('#leftArrow').hide();
             }
         });
