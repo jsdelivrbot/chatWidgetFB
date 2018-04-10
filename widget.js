@@ -442,16 +442,11 @@
                                             .animate({
                                                 scrollLeft: "-=" + 200
                                             }, "fast", function () {
-
                                                 if (repliesList.scrollLeft() < rightArrow.width()) {
                                                     $('#leftArrow').hide();
                                                 }
+                                                
                                                 rightArrow.css('display', 'flex');
-                                                if ($('.scrolling-container').width() > repliesList.width()) {
-                                                    $('#leftArrow').hide();
-                                                    $('#rightArrow').hide();
-                                                }
-
                                             });
                                     }
                                 )
@@ -479,11 +474,6 @@
                                                 }
 
                                                 leftArrow.css('display', 'flex');
-                                                if ($('.scrolling-container').width() > $('#scroll').width()) {
-                                                    $('#leftArrow').hide();
-                                                    $('#rightArrow').hide();
-                                                }
-
                                             });
                                     }
                                 )
@@ -505,26 +495,30 @@
                             .appendTo(scrCont.find('ul'));
                     });
 
-                    scrCont.find('ul').find('li').each(function () {
-                        scrContWidth += parseInt($(this).css('width'), 10);
+                    //as DOM updates asynchronously, setTimeout is used, otherwise each width === 0
+                    setTimeout(function () {
+                        scrCont.find('ul').find('li').each(function () {
+                            console.log($(this).css("width"));
+                            scrContWidth += parseInt($(this).css('width'), 10);
+                            console.log(scrContWidth);
+                        });
+
+                        if (scrContWidth > parseInt($("#scroll").css('width'), 10)) {
+                            scrCont.addClass('scrollable');
+                        }
+
+                        if ($('.scrolling-container').width() > scrContWidth) {
+                            $('#leftArrow').hide();
+                            $('#rightArrow').hide();
+                        } else {
+                            $('#leftArrow').css('display', 'flex');
+                            $('#rightArrow').css('display', 'flex');
+                        }
+
+                        if ($('.quick').find('ul').scrollLeft() === 0) {
+                            $('#leftArrow').hide();
+                        }
                     });
-
-                    if (scrContWidth > parseInt($("#messageContainer").css('width'), 10)) {
-                        scrCont.addClass('scrollable');
-                    }
-
-                    if ($('.scrolling-container').width() > $('#scroll').width()) {
-                        $('#leftArrow').hide();
-                        $('#rightArrow').hide();
-                    } else {
-                        $('#leftArrow').css('display', 'flex');
-                        $('#rightArrow').css('display', 'flex');
-                    }
-
-                    if ($('.quick').find('ul').scrollLeft() === 0) {
-                        $('#leftArrow').hide();
-                    }
-
                 }
 
                 if (val.message.attachment && val.message.attachment.payload.elements) {
@@ -823,7 +817,7 @@
                     // type: "POST",
                     type: "GET",            //mocked up version, should be post with data: !!!
                     // url: getStartedUrl,
-                    url: './data/typing.json',           //mocked up version,
+                    url: './data/response3.json',           //mocked up version,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     data: JSON.stringify(data),
