@@ -367,15 +367,15 @@
         }
 
         var container = null;
-        function setResponse(val) {
 
+        function setResponse(val) {
             var typing = $('.message-container').find($('#wave'));
 
             if (typing) {
-                typing.parent().parent().remove();
+                typing.parent().remove();
             }
 
-            if(!container) {
+            if (!container) {
                 container = $('<div class="message-outer bot">')
                     .append(
                         $('<div class="flex-container">')
@@ -417,274 +417,274 @@
                     message.text(val.message.attachment.payload.text);
                 }
 
-                setTimeout(function () {
-                    if (message.text().length && message.text().trim()) {
-                        $('<div class="message-row">')
-                            .append(message)
-                            .appendTo(msgWrapper);
+                // setTimeout(function () {
+                if (message.text().length && message.text().trim()) {
+                    $('<div class="message-row">')
+                        .append(message)
+                        .appendTo(msgWrapper);
+                }
+
+                if (val.message.quick_replies) {
+                    scrCont = $('<div>')
+                        .addClass('scrolling-container')
+                        .addClass('quick')
+                        .append(
+                            $('<span class="arrow">')
+                                .attr('id', 'leftArrow')
+                                .text('<')
+                                .click(
+                                    function () {
+                                        var repliesList = $('#scroll');
+                                        var rightArrow = $('#rightArrow');
+                                        repliesList
+                                            .clearQueue()
+                                            .stop()
+                                            .animate({
+                                                scrollLeft: "-=" + 200
+                                            }, "fast", function () {
+
+                                                if (repliesList.scrollLeft() < rightArrow.width()) {
+                                                    $('#leftArrow').hide();
+                                                }
+                                                rightArrow.css('display', 'flex');
+                                                if ($('.scrolling-container').width() > repliesList.width()) {
+                                                    $('#leftArrow').hide();
+                                                    $('#rightArrow').hide();
+                                                }
+
+                                            });
+                                    }
+                                )
+                        )
+                        .append(
+                            $('<span class="arrow">')
+                                .attr('id', 'rightArrow')
+                                .text('>')
+                                .click(
+                                    function () {
+                                        var repliesList = $('#scroll');
+                                        var leftArrow = $('#leftArrow');
+                                        repliesList
+                                            .clearQueue()
+                                            .stop()
+                                            .animate({
+                                                scrollLeft: "+=" + 200
+                                            }, "fast", function () {
+
+                                                if (repliesList.scrollLeft() + repliesList.width() >=
+                                                    (repliesList.get(0).scrollWidth - leftArrow.width())) {
+
+                                                    $('#rightArrow').hide();
+
+                                                }
+
+                                                leftArrow.css('display', 'flex');
+                                                if ($('.scrolling-container').width() > $('#scroll').width()) {
+                                                    $('#leftArrow').hide();
+                                                    $('#rightArrow').hide();
+                                                }
+
+                                            });
+                                    }
+                                )
+                        )
+                        .append(
+                            $('<ul>')
+                                .attr('id', 'scroll')
+                        )
+                        .appendTo(msgWrapper);
+
+                    val.message.quick_replies.forEach(function (item) {
+                        $('<li>')
+                            .text(item.title)
+                            .attr('payload', item.payload)
+                            .click(function () {
+                                send("btn", $(this));
+                                $(this).closest('.scrolling-container.quick').remove();
+                            })
+                            .appendTo(scrCont.find('ul'));
+                    });
+
+                    scrCont.find('ul').find('li').each(function () {
+                        scrContWidth += parseInt($(this).css('width'), 10);
+                    });
+
+                    if (scrContWidth > parseInt($("#messageContainer").css('width'), 10)) {
+                        scrCont.addClass('scrollable');
                     }
 
-                    if (val.message.quick_replies) {
-                        scrCont = $('<div>')
-                            .addClass('scrolling-container')
-                            .addClass('quick')
-                            .append(
-                                $('<span class="arrow">')
-                                    .attr('id', 'leftArrow')
-                                    .text('<')
-                                    .click(
-                                        function () {
-                                            var repliesList = $('#scroll');
-                                            var rightArrow = $('#rightArrow');
-                                            repliesList
-                                                .clearQueue()
-                                                .stop()
-                                                .animate({
-                                                    scrollLeft: "-=" + 200
-                                                }, "fast", function () {
+                    if ($('.scrolling-container').width() > $('#scroll').width()) {
+                        $('#leftArrow').hide();
+                        $('#rightArrow').hide();
+                    } else {
+                        $('#leftArrow').css('display', 'flex');
+                        $('#rightArrow').css('display', 'flex');
+                    }
 
-                                                    if (repliesList.scrollLeft() < rightArrow.width()) {
-                                                        $('#leftArrow').hide();
-                                                    }
-                                                    rightArrow.css('display', 'flex');
-                                                    if ($('.scrolling-container').width() > repliesList.width()) {
-                                                        $('#leftArrow').hide();
-                                                        $('#rightArrow').hide();
-                                                    }
+                    if ($('.quick').find('ul').scrollLeft() === 0) {
+                        $('#leftArrow').hide();
+                    }
 
-                                                });
-                                        }
+                }
+
+                if (val.message.attachment && val.message.attachment.payload.elements) {
+
+                    scrCont = $('<div>')
+                        .addClass('scrolling-container')
+                        .append(
+                            $('<span class="arrow">')
+                                .text('<')
+                                .click(
+                                    function () {
+                                        var navwidth = parseInt(scrCont.find('ul').css('width'), 10);
+                                        scrCont.find('ul')
+                                            .animate({
+                                                scrollLeft: "-=" + navwidth
+                                            }, "fast");
+                                    }
+                                )
+                        )
+                        .append(
+                            $('<span class="arrow">')
+                                .text('>')
+                                .click(
+                                    function () {
+                                        var navwidth = parseInt(scrCont.find('ul').css('width'), 10);
+
+                                        scrCont.find('ul')
+                                            .animate({
+                                                scrollLeft: "+=" + navwidth
+                                            }, "fast");
+                                    }
+                                )
+                        )
+                        .append(
+                            $('<ul>')
+                        );
+
+                    if (val.message.attachment.payload.template_type === "list") {
+                        scrCont.addClass('list');
+                    }
+
+                    scrCont.appendTo(msgWrapper);
+
+
+                    val.message.attachment.payload.elements.forEach(function (item) {
+                        var generic = $('<li>').addClass('generic');
+
+                        if (item.image_url) {
+                            generic.append(
+                                $('<div>')
+                                    .addClass('generic-img')
+                                    .append(
+                                        $('<div>')
+                                            .addClass('inner')
+                                            .css('background-image', 'url("' + item.image_url + '")')
                                     )
                             )
-                            .append(
-                                $('<span class="arrow">')
-                                    .attr('id', 'rightArrow')
-                                    .text('>')
-                                    .click(
-                                        function () {
-                                            var repliesList = $('#scroll');
-                                            var leftArrow =  $('#leftArrow');
-                                            repliesList
-                                                .clearQueue()
-                                                .stop()
-                                                .animate({
-                                                    scrollLeft: "+=" + 200
-                                                }, "fast", function () {
+                        }
 
-                                                    if (repliesList.scrollLeft() + repliesList.width() >=
-                                                        (repliesList.get(0).scrollWidth - leftArrow.width())) {
+                        if (item.title || item.subtitle) {
+                            var info = $('<div>')
+                                .addClass('generic-info')
+                                .appendTo(generic)
+                        }
 
-                                                        $('#rightArrow').hide();
-
-                                                    }
-
-                                                    leftArrow.css('display', 'flex');
-                                                    if ($('.scrolling-container').width() > $('#scroll').width()) {
-                                                        $('#leftArrow').hide();
-                                                        $('#rightArrow').hide();
-                                                    }
-
-                                                });
-                                        }
-                                    )
-                            )
-                            .append(
-                                $('<ul>')
-                                    .attr('id', 'scroll')
-                            )
-                            .appendTo(msgWrapper);
-
-                        val.message.quick_replies.forEach(function (item) {
-                            $('<li>')
+                        if (item.title) {
+                            $('<p>')
+                                .addClass('title')
                                 .text(item.title)
-                                .attr('payload', item.payload)
+                                .appendTo(info)
+                        }
+                        if (item.subtitle) {
+                            $('<p>')
+                                .addClass('subtitle')
+                                .text(item.subtitle)
+                                .appendTo(info)
+                        }
+
+                        if (item.buttons) {
+
+                            item.buttons.forEach(function (entry) {
+                                var btn = $('<a>')
+                                    .addClass('generic-btn')
+                                    .text(entry.title);
+
+                                if (entry.type === "postback") {
+                                    btn
+                                        .attr('payload', entry.payload)
+                                        .click(function () {
+                                            send("btn", $(this));
+                                        });
+                                } else if (entry.type === "web_url") {
+                                    btn
+                                        .attr('href', entry.url)
+                                        .attr('target', '_blank')
+                                }
+
+                                btn.appendTo(generic);
+
+                            })
+
+                        }
+
+                        generic.appendTo(scrCont.find('ul'));
+                    });
+
+                    setGenericWidth(scrCont);
+                }
+
+                if (val.message.attachment && val.message.attachment.payload.buttons) {
+
+                    message.css('border-radius', '6px 6px 0 0');
+                    btnWidth = message.outerWidth() + 1;
+
+                    val.message.attachment.payload.buttons.forEach(function (entry) {
+
+                        var btn = $('<a class="chat-message button">').text(entry.title);
+
+                        if (btnWidth !== 0) {
+                            // btn.css('width', btnWidth);
+                        } else if ($('.scrolling-container.list') && !btnWidth) {
+                            btnWidth = parseInt($('.scrolling-container.list').css('width'), 10);
+                            btn
+                                .css('max-width', '100%')
+                                .css('margin', '0 5px')
+                                .css('width', btnWidth - 10)
+                                .css('top', '-4px');
+                        } else {
+                            btn.css('display', 'inline-block');
+                        }
+
+                        if (entry.type === "postback") {
+                            btn
+                                .attr('payload', entry.payload)
                                 .click(function () {
                                     send("btn", $(this));
-                                    $(this).closest('.scrolling-container.quick').remove();
-                                })
-                                .appendTo(scrCont.find('ul'));
-                        });
-
-                        scrCont.find('ul').find('li').each(function () {
-                            scrContWidth += parseInt($(this).css('width'), 10);
-                        });
-
-                        if (scrContWidth > parseInt($("#messageContainer").css('width'), 10)) {
-                            scrCont.addClass('scrollable');
+                                });
+                        } else if (entry.type === "web_url") {
+                            btn
+                                .attr('href', entry.url)
+                                .attr('target', '_blank')
                         }
 
-                        if ($('.scrolling-container').width() > $('#scroll').width()) {
-                            $('#leftArrow').hide();
-                            $('#rightArrow').hide();
-                        } else {
-                            $('#leftArrow').css('display', 'flex');
-                            $('#rightArrow').css('display', 'flex');
-                        }
+                        btn.appendTo(msgWrapper)
+                    });
+                }
 
-                        if ($('.quick').find('ul').scrollLeft() === 0) {
-                            $('#leftArrow').hide();
-                        }
+                if (val.message.attachment && val.message.attachment.type === "image" && val.message.attachment.payload.url) {
 
-                    }
+                    $('<div class="message-row">')
+                        .append(
+                            $('<img class="image_simple" alt="image sent by chatbot"/>')
+                                .attr("src", val.message.attachment.payload.url)
+                        )
+                        .appendTo(msgWrapper);
 
-                    if (val.message.attachment && val.message.attachment.payload.elements) {
+                }
 
-                        scrCont = $('<div>')
-                            .addClass('scrolling-container')
-                            .append(
-                                $('<span class="arrow">')
-                                    .text('<')
-                                    .click(
-                                        function () {
-                                            var navwidth = parseInt(scrCont.find('ul').css('width'), 10);
-                                            scrCont.find('ul')
-                                                .animate({
-                                                    scrollLeft: "-=" + navwidth
-                                                }, "fast");
-                                        }
-                                    )
-                            )
-                            .append(
-                                $('<span class="arrow">')
-                                    .text('>')
-                                    .click(
-                                        function () {
-                                            var navwidth = parseInt(scrCont.find('ul').css('width'), 10);
-
-                                            scrCont.find('ul')
-                                                .animate({
-                                                    scrollLeft: "+=" + navwidth
-                                                }, "fast");
-                                        }
-                                    )
-                            )
-                            .append(
-                                $('<ul>')
-                            );
-
-                        if (val.message.attachment.payload.template_type === "list") {
-                            scrCont.addClass('list');
-                        }
-
-                        scrCont.appendTo(msgWrapper);
-
-
-                        val.message.attachment.payload.elements.forEach(function (item) {
-                            var generic = $('<li>').addClass('generic');
-
-                            if (item.image_url) {
-                                generic.append(
-                                    $('<div>')
-                                        .addClass('generic-img')
-                                        .append(
-                                            $('<div>')
-                                                .addClass('inner')
-                                                .css('background-image', 'url("' + item.image_url + '")')
-                                        )
-                                )
-                            }
-
-                            if (item.title || item.subtitle) {
-                                var info = $('<div>')
-                                    .addClass('generic-info')
-                                    .appendTo(generic)
-                            }
-
-                            if (item.title) {
-                                $('<p>')
-                                    .addClass('title')
-                                    .text(item.title)
-                                    .appendTo(info)
-                            }
-                            if (item.subtitle) {
-                                $('<p>')
-                                    .addClass('subtitle')
-                                    .text(item.subtitle)
-                                    .appendTo(info)
-                            }
-
-                            if (item.buttons) {
-
-                                item.buttons.forEach(function (entry) {
-                                    var btn = $('<a>')
-                                        .addClass('generic-btn')
-                                        .text(entry.title);
-
-                                    if (entry.type === "postback") {
-                                        btn
-                                            .attr('payload', entry.payload)
-                                            .click(function () {
-                                                send("btn", $(this));
-                                            });
-                                    } else if (entry.type === "web_url") {
-                                        btn
-                                            .attr('href', entry.url)
-                                            .attr('target', '_blank')
-                                    }
-
-                                    btn.appendTo(generic);
-
-                                })
-
-                            }
-
-                            generic.appendTo(scrCont.find('ul'));
-                        });
-
-                        setGenericWidth(scrCont);
-                    }
-
-                    if (val.message.attachment && val.message.attachment.payload.buttons) {
-
-                        message.css('border-radius', '6px 6px 0 0');
-                        btnWidth = message.outerWidth() + 1;
-
-                        val.message.attachment.payload.buttons.forEach(function (entry) {
-
-                            var btn = $('<a class="chat-message button">').text(entry.title);
-
-                            if (btnWidth !== 0) {
-                                // btn.css('width', btnWidth);
-                            } else if ($('.scrolling-container.list') && !btnWidth) {
-                                btnWidth = parseInt($('.scrolling-container.list').css('width'), 10);
-                                btn
-                                    .css('max-width', '100%')
-                                    .css('margin', '0 5px')
-                                    .css('width', btnWidth - 10)
-                                    .css('top', '-4px');
-                            } else {
-                                btn.css('display', 'inline-block');
-                            }
-
-                            if (entry.type === "postback") {
-                                btn
-                                    .attr('payload', entry.payload)
-                                    .click(function () {
-                                        send("btn", $(this));
-                                    });
-                            } else if (entry.type === "web_url") {
-                                btn
-                                    .attr('href', entry.url)
-                                    .attr('target', '_blank')
-                            }
-
-                            btn.appendTo(msgWrapper)
-                        });
-                    }
-
-                    if (val.message.attachment && val.message.attachment.type === "image" && val.message.attachment.payload.url) {
-
-                        $('<div class="message-row">')
-                            .append(
-                                $('<img class="image_simple" alt="image sent by chatbot"/>')
-                                    .attr("src", val.message.attachment.payload.url)
-                            )
-                            .appendTo(msgWrapper);
-
-                    }
-
-                    chatScrollBottom();
-                }, 333);
+                chatScrollBottom();
+                // }, 333);
             }
 
             container.appendTo($('#chat-window').find('.message-container'));
@@ -823,7 +823,7 @@
                     // type: "POST",
                     type: "GET",            //mocked up version, should be post with data: !!!
                     // url: getStartedUrl,
-                    url: './data/response5.json',           //mocked up version,
+                    url: './data/typing.json',           //mocked up version,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     data: JSON.stringify(data),
