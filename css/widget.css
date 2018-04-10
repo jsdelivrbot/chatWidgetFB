@@ -209,10 +209,11 @@
 #chat-window .message-container .chat-message.button {
     font-weight: 400;
     padding: 12px 18px;
-    margin: 0 0 0 10px;
+    margin: 0;
     display: block;
     clear: both;
-    width: 92%;
+    width: 100%;
+    max-width: 100%;
     word-wrap: break-word;
     line-height: 100%;
     position: relative;
@@ -221,17 +222,18 @@
     border-width: 0 1px 1px 1px;
     text-align: center;
     border-radius: 0;
-    top: -14px;
+    top: -2px;
     z-index: 0;
     font-size: 14px;
     color: #2F80ED;
     margin-right: 10px;
     text-decoration: none;
 }
-#chat-window .message-container .chat-message.button:first-child {
-    border-radius: 6px 6px 0 0;
+#chat-window .message-container .chat-message.button:first-of-type {
+    border-radius: 0 6px 0 0;
+    border-top-width: 1px;
 }
-#chat-window .message-container .chat-message.button:last-child {
+#chat-window .message-container .chat-message.button:last-of-type {
     border-radius: 0 0 6px 6px;
     border-bottom-width: 1px;
 
@@ -400,10 +402,10 @@
     float: left;
     clear: both;
     width: 100%;
-    padding: 0 10px;
+    /*padding: 0 10px;*/
 }
 
-#chat-window .message-container .message-row:not(:last-child) {
+#chat-window .message-container .message-row:not(:last-of-type) {
     margin-bottom: 8px;
 }
 
@@ -462,6 +464,7 @@
 
 #chat-window .message-container .message-outer.bot .message-wrapper {
     width: calc(100% - 34px);
+    padding: 0 10px;
 }
 
 #chat-window .message-container .scrolling-container {
@@ -477,6 +480,10 @@
 #chat-window .message-container .scrolling-container.scrollable:not(.list) {
     padding: 0 24px;
     /*margin-bottom: 4px;*/
+}
+
+#chat-window .message-container .scrolling-container.scrollable.list {
+    padding: 0;
 }
 
 #chat-window .message-container .scrolling-container.scrollable:not(.list) .arrow{
@@ -525,7 +532,7 @@
 #chat-window .message-container .scrolling-container.list ul {
     display: block;
     width: 100%;
-    margin: 0 5px;
+    margin: 0;
 }
 
 #chat-window .message-container .scrolling-container ul li {
@@ -591,6 +598,7 @@
     padding: 10px;
     text-align: left;
     width: 100%;
+    max-width: 100%;
 }
 #chat-window .message-container .scrolling-container.list ul .generic .generic-info {
     padding: 0;

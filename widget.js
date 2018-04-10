@@ -642,9 +642,9 @@
                         val.message.attachment.payload.buttons.forEach(function (entry) {
 
                             var btn = $('<a class="chat-message button">').text(entry.title);
-                            if (btnWidth !== 0) {
-                                btn.css('width', btnWidth);
 
+                            if (btnWidth !== 0) {
+                                // btn.css('width', btnWidth);
                             } else if ($('.scrolling-container.list') && !btnWidth) {
                                 btnWidth = parseInt($('.scrolling-container.list').css('width'), 10);
                                 btn
@@ -655,6 +655,7 @@
                             } else {
                                 btn.css('display', 'inline-block');
                             }
+
                             if (entry.type === "postback") {
                                 btn
                                     .attr('payload', entry.payload)
@@ -895,14 +896,11 @@
 
                 // genericScrollValue = parseInt($('.chat-container').css('width'), 10);
 
-                var genericWidth = parseInt($('#messageContainer .message-outer.bot').css('width'), 10) - 28 - 60;
-
                 if (scrCont === undefined) {
                     scrCont = $(".scrolling-container:not(.quick)").last();
                 }
 
                 scrCont.find('.generic-info').each(function () {
-                    $(this).css('width', genericWidth);
                     var genImg = $(this).parent().find('.generic-img');
 
                     if (genImg) {
