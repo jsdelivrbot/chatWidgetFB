@@ -637,10 +637,13 @@
     align-self: center;
     text-align: center;
     padding: 6px;
-    margin-top: auto;
     width: 100%;
     display: block;
     border-top: 1px solid rgba(0, 0, 0, .1);
+}
+
+#chat-window .message-container .scrolling-container ul .generic .generic-btn:first-child {
+    margin-top: auto;
 }
 
 #chat-window .message-container .scrolling-container.list ul .generic .generic-btn {

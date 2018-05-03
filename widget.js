@@ -445,7 +445,7 @@
                                                 if (repliesList.scrollLeft() < rightArrow.width()) {
                                                     $('#leftArrow').hide();
                                                 }
-                                                
+
                                                 rightArrow.css('display', 'flex');
                                             });
                                     }
