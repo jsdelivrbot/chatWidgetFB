@@ -2,27 +2,27 @@
 
 (function () {
 
-    var rootUrl = "./";
-    var botImageUrl = "https://rawgit.com/kachanovskyi/toyotacr-widget/master/img/toyota-logo.png";
-    var getStartedUrl = "https://pavlenko.botscrew.com/web/getStarted";         //to get a FB userId. FB returns userId - IMPORTANT!
+    var rootUrl = "https://drdean.botscrew.com/";
+    var botImageUrl = "https://drdean.botscrew.com/images/avatar.png";
+    var getStartedUrl = "https://drdean.botscrew.com/web/getStarted";         //to get a FB userId. FB returns userId - IMPORTANT!
 
-    var socketUrl = "https://pavlenko.botscrew.com/web";
+    var socketUrl = "https://drdean.botscrew.com/web";
     var stompClientSubscribeUrl = "/topic/greetings/";
     var stompClientSendUrl = "/app/hello";
 
-    var appId = 1975921582622675;
+    var appId = 1743434529064321;
     var persistentMenuList = [
         {
             title: "Disclaimer",
-            postback: "DISCLAIMER"
+            postback: "Disclaimer"
         },
         {
             title: "Main Menu",
-            postback: "MAIN_MENU"
+            postback: "Main Menu"
         },
         {
             title: "Help",
-            postback: "HELP_MENU"
+            postback: "Help"
         }
     ];
 
@@ -202,11 +202,11 @@
                     .appendTo(chatbot);
 
                 var menu = $('<ul class="persistent-menu">')
-                    .append($('<li class="menu-item">Menu</li>'))
+                    .append($('<li class="menu-item-widget">Menu</li>'))
                     .appendTo($(".chat-bottom"));
 
                 persistentMenuList.forEach(function (value) {
-                    $('<li class="menu-item link">')
+                    $('<li class="menu-item-widget link">')
                         .text(value.title)
                         .data("postback", value.postback)
                         .on("click", function () {
@@ -228,7 +228,7 @@
                 .append(
                     $('<div class="inner">')
                         .append(
-                            $('<p class="description">Please login</p>')
+                            $('<p class="description">Please, provide your name</p>')
                         )
                         .append(
                             $('<input type="text" placeholder="Name" >')
@@ -241,6 +241,12 @@
                                 .css('margin-bottom', '10px')
                                 .css('box-shadow', '3px 3px 11px -3px')
                                 .css('height', '44px')
+                                .keypress(function (evt) {
+                                    if (evt.which === 13) {
+                                        evt.preventDefault();
+                                        login();
+                                    }
+                                })
                         )
                         .append('<br>')
                         .append(
@@ -254,8 +260,21 @@
                                 .css('box-shadow', '3px 3px 11px -3px')
                                 .css('background', 'white')
                                 .css('height', '44px')
+                                .keypress(function (evt) {
+                                    if (evt.which === 13) {
+                                        evt.preventDefault();
+                                        login();
+                                    }
+                                })
                         )
                         .append('<br>')
+                        .append(
+                            $('<p id="wrongEmailMessage">')
+                                .css("font-size", "10pt")
+                                .css("display", "none")
+                                .css("color", "red")
+                                .text("Invalid email")
+                        )
                         .append(
                             $('<a class="login-btn fb">')
                                 .css('padding', '10px')
@@ -264,48 +283,20 @@
                                 .append(
                                     $('<span class="text">').text('Login')
                                 )
-                                .click(function () {
-                                    var name = $('#inputName').val();
-                                    var email = $('#inputEmail').val();
-                                    if (name != '' && email != '') {
-                                        $($('.start-screen')[0]).fadeOut("fast", function () {
-                                            var data = {
-                                                name: name,
-                                                email: email
-                                            };
-                                            console.log(data);
-                                            chatInit();                                         //mocked up version
-                                            $.ajax({
-                                                type: "POST",
-                                                url: getStartedUrl,
-                                                contentType: "application/json; charset=utf-8",
-                                                dataType: "json",
-                                                data: JSON.stringify(data),
-
-                                                success: function (id) {
-                                                    chatId = id;
-                                                    connect();
-                                                },
-                                                error: function () {
-                                                    console.log("Internal Server Error. Not possible to get chat id.");
-                                                }
-                                            });
-                                        })
-                                    }
-                                })
-                        )
-                        .append('<hr class="hr-text" data-content="OR">')
-                        .append(
-                            $('<a class="login-btn fb">')
-                                .append(
-                                    $('<span class="logo">').text('f')
-                                )
-                                .append(
-                                    $('<span class="text">').text('Login with Facebook')
-                                )
-                                .css('width', '250px')
-                                .on("click", loginFB)
-                        )
+                                .click(login)
+                        // )
+                    // .append('<hr class="hr-text" data-content="OR">')
+                    // .append(
+                    //     $('<a class="login-btn fb">')
+                    //         .append(
+                    //             $('<span class="logo">').text('f')
+                    //         )
+                    //         .append(
+                    //             $('<span class="text">').text('Login with Facebook')
+                    //         )
+                    //         .css('width', '250px')
+                    //         .on("click", loginFB)
+                    )
                 )
                 .appendTo(messageContainer);
 
@@ -326,6 +317,57 @@
             };
             messageContainer.isolatedScroll();
         });
+
+        function login() {
+            var emailInput = $('#inputEmail');
+            var nameInput = $('#inputName');
+            var emailMessage = $('#wrongEmailMessage');
+            var name = nameInput.val();
+            var email = emailInput.val();
+
+            emailInput.css('background', 'white').css('border', '1px solid #ccc');
+            nameInput.css('background', 'white').css('border', '1px solid #ccc');
+            emailMessage.css("display", "none");
+            if (name.length <= 0) {
+                nameInput
+                    .css("border-color", "red")
+                    .css("background-color", "rgba(255, 0, 0, 0.3)");
+                return;
+            }
+            if (!validateEmail(email)) {
+                emailMessage
+                    .css("display", "block");
+                emailInput
+                    .css("border-color", "red")
+                    .css("background-color", "rgba(255, 0, 0, 0.3)");
+                return;
+            }
+            $($('.start-screen')[0]).fadeOut("fast", function () {
+
+                console.log(280);
+                var data = {
+                    name: name,
+                    email: email
+                };
+                console.log(data);
+                // chatInit();                                         //mocked up version
+                $.ajax({
+                    type: "POST",
+                    url: getStartedUrl,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify(data),
+
+                    success: function (id) {
+                        chatId = id;
+                        connect();
+                    },
+                    error: function () {
+                        console.log("Internal Server Error. Not possible to get chat id.");
+                    }
+                });
+            })
+        }
 
         function chatWindowShow() {
             $('#chat-window').show();
@@ -416,14 +458,13 @@
                 } else if (val.message.attachment !== undefined) {
                     message.text(val.message.attachment.payload.text);
                 }
-
                 // setTimeout(function () {
                 if (message.text().length && message.text().trim()) {
                     $('<div class="message-row">')
                         .append(message)
                         .appendTo(msgWrapper);
                 }
-
+                console.log(1);
                 if (val.message.quick_replies) {
                     scrCont = $('<div>')
                         .addClass('scrolling-container')
@@ -442,11 +483,16 @@
                                             .animate({
                                                 scrollLeft: "-=" + 200
                                             }, "fast", function () {
+
                                                 if (repliesList.scrollLeft() < rightArrow.width()) {
                                                     $('#leftArrow').hide();
                                                 }
-
                                                 rightArrow.css('display', 'flex');
+                                                // if ($('.scrolling-container').width() > repliesList.width()) {
+                                                //     $('#leftArrow').hide();
+                                                //     $('#rightArrow').hide();
+                                                // }
+
                                             });
                                     }
                                 )
@@ -474,6 +520,11 @@
                                                 }
 
                                                 leftArrow.css('display', 'flex');
+                                                // if ($('.scrolling-container').width() > $('#scroll').width()) {
+                                                //     $('#leftArrow').hide();
+                                                //     $('#rightArrow').hide();
+                                                // }
+
                                             });
                                     }
                                 )
@@ -494,13 +545,10 @@
                             })
                             .appendTo(scrCont.find('ul'));
                     });
-
-                    //as DOM updates asynchronously, setTimeout is used, otherwise each width === 0
                     setTimeout(function () {
+
                         scrCont.find('ul').find('li').each(function () {
-                            console.log($(this).css("width"));
                             scrContWidth += parseInt($(this).css('width'), 10);
-                            console.log(scrContWidth);
                         });
 
                         if (scrContWidth > parseInt($("#scroll").css('width'), 10)) {
@@ -518,7 +566,8 @@
                         if ($('.quick').find('ul').scrollLeft() === 0) {
                             $('#leftArrow').hide();
                         }
-                    });
+                    })
+
                 }
 
                 if (val.message.attachment && val.message.attachment.payload.elements) {
@@ -677,6 +726,7 @@
 
                 }
 
+                console.log(333);
                 chatScrollBottom();
                 // }, 333);
             }
@@ -698,11 +748,16 @@
                     userId = JSON.parse(greeting.body).recipient.id;
                     showGreeting(JSON.parse(greeting.body));
                 });
-                sendName("hi");
+                sendName("GET_STARTED", "btn");
             });
             $('html, body').animate({
                 scrollTop: 300
             });
+        }
+
+        function validateEmail(email) {
+            var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(String(email).toLowerCase());
         }
 
         function disconnect() {
@@ -749,7 +804,7 @@
                 data.entry[0].messaging[0].message.is_echo = true;
             }
 
-            // stompClient.send(stompClientSendUrl, {}, JSON.stringify(data));
+            stompClient.send(stompClientSendUrl, {}, JSON.stringify(data));
         }
 
         function showGreeting(message) {
@@ -814,17 +869,17 @@
                     token: token
                 };
                 $.ajax({
-                    // type: "POST",
-                    type: "GET",            //mocked up version, should be post with data: !!!
-                    // url: getStartedUrl,
-                    url: './data/response3.json',           //mocked up version,
+                    type: "POST",
+                    // type: "GET",            //mocked up version, should be post with data: !!!
+                    url: getStartedUrl,
+                    // url: './data/response5.json',           //mocked up version,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     data: JSON.stringify(data),
 
                     success: function (id) {
-                        setResponse(id);            //mocked up version, should be connect()
-                        // connect();
+                        // setResponse(id);            //mocked up version, should be connect()
+                        connect();
                     },
                     error: function () {
                         console.log("Internal Server Error. Not possible to get chat id.");

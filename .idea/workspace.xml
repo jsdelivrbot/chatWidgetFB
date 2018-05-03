@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c68194e6-483a-4da6-8878-c61f77446a4a" name="Default" comment="315">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/css/widget.css" afterPath="$PROJECT_DIR$/css/widget.css" />
-      <change beforePath="$PROJECT_DIR$/widget.js" afterPath="$PROJECT_DIR$/widget.js" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -60,8 +58,8 @@
       <file leaf-file-name="widget.css" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/css/widget.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="461">
-              <caret line="648" column="54" lean-forward="true" selection-start-line="648" selection-start-column="54" selection-end-line="648" selection-end-column="54" />
+            <state relative-caret-position="488">
+              <caret line="640" column="19" lean-forward="true" selection-start-line="640" selection-start-column="19" selection-end-line="640" selection-end-column="19" />
               <folding />
             </state>
           </provider>
@@ -778,8 +776,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/css/widget.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="461">
-          <caret line="648" column="54" lean-forward="true" selection-start-line="648" selection-start-column="54" selection-end-line="648" selection-end-column="54" />
+        <state relative-caret-position="488">
+          <caret line="640" column="19" lean-forward="true" selection-start-line="640" selection-start-column="19" selection-end-line="640" selection-end-column="19" />
           <folding />
         </state>
       </provider>
