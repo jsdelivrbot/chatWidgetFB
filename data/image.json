@@ -6,7 +6,7 @@
     "attachment": {
       "type": "image",
       "payload": {
-        "url": "https://rawgit.com/kachanovskyi/kachanovskyi.github.com/master/img/article-1-img-1.png",
+        "url": "https://cdn.jsdelivr.net/gh/kachanovskyi/kachanovskyi.github.com/img/article-1-img-1.png",
         "is_reusable": null
       }
     }
